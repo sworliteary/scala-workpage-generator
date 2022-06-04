@@ -1,5 +1,15 @@
 {
     "files.watcherExclude": {
         "**/target": true
-    }
+    },
+    "[scala]": {
+        "editor.suggestSelection": "first",
+        "editor.formatOnPaste": true,
+        "editor.formatOnType": true,
+        "editor.formatOnSave": true
+    },
+    "cSpell.words": [
+        "Fanfiction",
+        "workbuilder"
+    ]
 }
