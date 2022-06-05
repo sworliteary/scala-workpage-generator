@@ -1,5 +1,13 @@
 package workbuilder
 
+case class NovelInfoJson(
+    title: String,
+    date: String,
+    tag: Option[Array[String]],
+    files: Option[Array[String]],
+    caption: Option[String]
+)
+
 case class NovelInfo(
     title: String,
     caption: Option[String],
