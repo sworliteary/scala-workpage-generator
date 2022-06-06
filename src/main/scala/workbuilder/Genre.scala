@@ -18,7 +18,7 @@ case class Original(f: File) extends Genre {
   override def path = "/original"
   override def name = "オリジナル"
 
-  override def is_fan_fiction: Boolean = true
+  override def is_fan_fiction: Boolean = false
 
   override def directory = f
 }
