@@ -63,6 +63,7 @@ case class Novel(
       <div class="text">${text
           .split("\n\n")
           .map(l =>
+            // このコードがここに存在してるのいくらなんでもやばすぎる
             s"<p>${l.replaceAll("\n", "<br/>").replaceAll("｜([^《]*)《([^》]*)》", "<ruby>$1<rt>$2</rt></ruby>")}</p>"
           )
           .mkString}
