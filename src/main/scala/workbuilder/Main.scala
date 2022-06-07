@@ -68,13 +68,17 @@ object Main {
       val genreHtml = s"""
       ${Util.htmlHeader(genre.name)}
         <h1>${genre.name}</h1>
-        <ul>
         ${works
           .map(v => {
-            s"<li><a href=\"${v.path}\">${v.info.title}</a><p>　${v.info.tag.map(_.name).mkString(" / ")}</p></li>"
+            s"""
+            <div class="work_info">
+            <h2><a href=\"${v.path}\">${v.info.title}</a></h2>
+            ${v.info.caption.fold("")(c => s"<p class=\"caption\">${c}</p>")}
+            <p>${v.info.tag.map(_.name).mkString(" / ")}</p>
+            </div>
+            """
           })
           .mkString}
-        </ul>
         <div class="info">
          <p><a href="/">Top</a><p>
         </div>
