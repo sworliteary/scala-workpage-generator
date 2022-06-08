@@ -23,7 +23,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     val path = args.head
     val repository = new File(path)
-    val outputBase = repository.getPath() + "/builder_output"
+    val outputBase = repository.getPath() + "/.out"
     val genres = listFilesRecursive(repository, "genre.json")
       .map(f => {
         decode[GenreJson](Source.fromFile(f).mkString) match {
@@ -52,7 +52,7 @@ object Main {
           }
         )
         .flatten
-        .sortWith((a, b) => a.info.date < b.info.date)
+        .sortWith((a, b) => a.info.date > b.info.date)
       works.foreach(w => {
         val dir = Paths.get(outputBase, w.outputPath())
         if (!Files.exists(dir)) Files.createDirectories(dir)
@@ -65,25 +65,27 @@ object Main {
       // genre page
       val dir = Paths.get(outputBase, genre.path)
       if (!Files.exists(dir)) Files.createDirectories(dir)
-      val genreHtml = s"""
-      ${Util.htmlHeader(genre.name)}
+      val genreHtml = Util.htmlPage(
+        genre.name + " | work.sayonara.voyage",
+        s"""
         <h1>${genre.name}</h1>
         ${works
-          .map(v => {
-            s"""
+            .map(v => {
+              s"""
             <div class="work_info">
             <h2><a href=\"${v.path}\">${v.info.title}</a></h2>
-            ${v.info.caption.fold("")(c => s"<p class=\"caption\">${c}</p>")}
-            <p>${v.info.tag.map(_.name).mkString(" / ")}</p>
+            ${v.info.caption.fold("")(c => s"<p class=\"caption\">${c.replaceAll("\n", "<br>")}</p>")}
+            <p class="tag">${v.info.tag.map(_.name).mkString(" / ")}</p>
+            <p class="date">${v.info.date.year}/${v.info.date.month}/${v.info.date.day}</p>
             </div>
             """
-          })
-          .mkString}
+            })
+            .mkString}
         <div class="info">
-         <p><a href="/">Top</a><p>
+        <p><a href="/">Top</a><p>
         </div>
-      ${Util.htmlFooter}
       """
+      )
       Files.write(dir.resolve("index.html"), genreHtml.getBytes(StandardCharsets.UTF_8))
 
       println(s"--- ${genre.name} (${works.length})")
@@ -95,33 +97,25 @@ object Main {
     })
 
     // index html
-    val index = s"""
-    ${Util.htmlHeader("work.sayonara.voyage")}
-    <h1>work.sayonara.voyage</h1>
-    <h2>サイト概要</h2>
-    <p>藤谷光の作品サイトです。</p>
-    <ul>
-      <li><a href="https://sayonara.voyage">Webサイト</a></li>
-      <li><a href="https://twitter.com/sworliteary">Twitter</a></li>
-    </ul>
-    <h2>作品</h2>
-    <h3>オリジナル</h3>
-    <ul>
-    ${genres.filter(!_.is_fan_fiction).map(g => s"<li><a href=\"${g.path}\">${g.name}</a></li>").mkString}
-    </ul>
-    <h3>二次創作</h3>
-    <ul>
-    ${genres.filter(_.is_fan_fiction).map(g => s"<li><a href=\"${g.path}\">${g.name}</a></li>").mkString}
-    </ul>
-    ${Util.htmlFooter}
-    """
-    Files.write(Paths.get(outputBase).resolve("index.html"), index.getBytes(StandardCharsets.UTF_8))
-    /*
-    val novel = Novel(
-      "これが本文です。これが本文です。",
-      NovelInfo("タイトルです", "/text", Some("aaaa"), Seq()),
-      Original()
+    val index = Util.htmlPage(
+      "work.sayonara.voyage",
+      s"""<h1>work.sayonara.voyage</h1>
+<h2>サイト概要</h2>
+<p>藤谷光の作品サイトです。</p>
+<ul>
+  <li><a href="https://sayonara.voyage">Webサイト</a></li>
+  <li><a href="https://twitter.com/sworliteary">Twitter</a></li>
+</ul>
+<h2>作品</h2>
+<h3>オリジナル</h3>
+<ul>
+${genres.filter(!_.is_fan_fiction).map(g => s"<li><a href=\"${g.path}\">${g.name}</a></li>\n").mkString("\n")}
+</ul>
+<h3>二次創作</h3>
+<ul>
+${genres.filter(_.is_fan_fiction).map(g => s"<li><a href=\"${g.path}\">${g.name}</a></li>").mkString("\n")}
+</ul>"""
     )
-     */
+    Files.write(Paths.get(outputBase).resolve("index.html"), index.getBytes(StandardCharsets.UTF_8))
   }
 }

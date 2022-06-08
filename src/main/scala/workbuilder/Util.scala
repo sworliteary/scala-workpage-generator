@@ -10,20 +10,18 @@ object Util {
       )
       .mkString
   }
-  def htmlHeader(title: String): String = s"""<!DOCTYPE html>
+  def htmlPage(title: String, body: String) = s"""<!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <title>${title}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <link rel="stylesheet" href="/index.css"/>
-  </head>
-  <body>
-  """
-
-  lazy val htmlFooter: String = s"""
-  <p class="copywrite">&copy; 2022 Hikari Hujiya</p>
-  </body>
-  </html>
-  """
+<head>
+  <meta charset="utf-8" />
+  <title>${title}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <link rel="stylesheet" href="/index.css"/>
+</head>
+<body>
+$body
+<p class="copywrite">&copy; 2022 Hikari Hujiya</p>
+</body>
+</html>  
+"""
 }
