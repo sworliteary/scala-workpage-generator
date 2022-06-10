@@ -14,7 +14,7 @@ case class NovelInfo(
     title: String,
     caption: Option[String],
     tag: Seq[Tag],
-    date: Date
+    date: Option[Date]
 )
 
 case class Novel(
@@ -33,7 +33,7 @@ case class Novel(
               else s"<a href=\"${if (j == 1) "index" else s"${j}"}.html\">${j}</a>"
             )
             .mkString(" ")}
-            <hr></div>"""
+            </div>"""
       }
     def toHtmlText(text: String): String = text
       .split("\n\n")
@@ -48,12 +48,12 @@ case class Novel(
         s"""
 <h1 class="title">${info.title}</h1>
 ${toc(i)}
-<div class="text">${toHtmlText(text)}
-</div>
 <hr>
+<div class="text">${toHtmlText(text)}</div>
 ${toc(i)}
+<hr>
 <div class="info">
-  <p><a href="${genre.path}">${genre.name}</a></p>
+  <p><a href="${genre.path}">${genre.name} 作品一覧へ</a></p>
   <!--<p>${info.tag.map(_.name).mkString(",")}</p>-->
   <p><a href="/">Top</a><p>
 </div>"""

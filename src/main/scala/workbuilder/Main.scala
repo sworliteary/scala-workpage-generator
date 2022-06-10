@@ -41,7 +41,7 @@ object Main {
         .map(f =>
           decode[NovelInfoJson](Source.fromFile(f).mkString) match {
             case Right(v) => {
-              val date = v.date.fold(Date())(Date(_))
+              val date = v.date.map(Date(_))
               val info = NovelInfo(v.title, v.caption, v.tag.fold(Seq.empty[Tag])(_.map(Tag(_))), date)
               val texts = v.files
                 .fold(Array(f.getParent() + "/text.txt"))(_.map(f.getParent() + "/" + _))
@@ -75,15 +75,16 @@ object Main {
             <div class="work_info">
             <h2><a href=\"${v.path}\">${v.info.title}</a></h2>
             ${v.info.caption.fold("")(c => s"<p class=\"caption\">${c.replaceAll("\n", "<br>")}</p>")}
-            <p class="tag">${v.info.tag.map(_.name).mkString(" / ")}</p>
-            <p class="date">${v.info.date.year}/${v.info.date.month}/${v.info.date.day}</p>
+            <div class="tags">${v.info.tag.map(_.htmlTag).mkString(" ")}</div>
+            ${v.info.date.fold("")(date => s"""<p class="date">${date.year}/${date.month}/${date.day}</p>""")}
+            <hr>
             </div>
             """
             })
             .mkString}
-        <div class="info">
-        <p><a href="/">Top</a><p>
-        </div>
+      <div class="info">
+      <p><a href="/">Top</a><p>
+      </div>
       """
       )
       Files.write(dir.resolve("index.html"), genreHtml.getBytes(StandardCharsets.UTF_8))
