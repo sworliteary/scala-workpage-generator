@@ -1,6 +1,8 @@
 package workbuilder
 
 import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
 
 case class GenreJson(
     name: String,
@@ -15,7 +17,7 @@ sealed trait Genre {
 }
 
 case class Original(f: File) extends Genre {
-  override def path = "/original"
+  override def path = "original"
   override def name = "オリジナル"
 
   override def is_fan_fiction: Boolean = false
@@ -24,21 +26,26 @@ case class Original(f: File) extends Genre {
 }
 
 case class Fanfiction(_name: String, _path: String, f: File) extends Genre {
-  override def path = "/fan_fiction/" + Genre.camelCaseToSnakeCase(_path)
+  override def path = "fan_fiction/" + Util.camelCaseToSnakeCase(_path)
   override def name: String = _name
   override def is_fan_fiction: Boolean = true
 
   override def directory = f
 }
 
-object Genre {
-  def camelCaseToSnakeCase(name: String): String = {
-    name.zipWithIndex
-      .map((v, i) =>
-        if (!v.isUpper) v.toString()
-        else if (i == 0) v.toLower.toString()
-        else "_" + v.toLower.toString()
-      )
-      .mkString
+object GenrePageGenerator extends PageGenerator[Genre] {
+  def generate(source: Genre, database: Database): Map[Path, String] = {
+    def path = Paths.get(source.path).resolve("index.html")
+    def works = database.getNovels.filter(_.genre == source).sortBy(_.info.date).reverse
+    val html = Util.htmlPage(
+      source.name + " | sayonara-voyage",
+      s"""<h1>${source.name}</h1>
+      |${works.map(_.htmlTag).mkString}
+      |<div class="info">
+      |<p><a href="/">Top</a><p>
+      |</div>
+      """.stripMargin
+    )
+    Map(path -> html)
   }
 }

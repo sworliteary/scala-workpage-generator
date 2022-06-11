@@ -1,15 +1,18 @@
 package workbuilder
 
-import java.io.File
 import io.circe.generic.auto.*
 import io.circe.parser.decode
 import io.circe.syntax.*
-import collection.JavaConverters._
-import scala.io.Source
+import org.apache.commons.io.FileUtils
+
+import java.io.File
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.nio.charset.StandardCharsets
+import scala.io.Source
+
+import collection.JavaConverters._
 import math.Ordered.orderingToOrdered
 
 object Main {
@@ -20,12 +23,21 @@ object Main {
       .flatMap(d => listFilesRecursive(d, fileName))
   }
 
+  def writeFile(path: Path, text: String, outputDir: Path) = {
+    val p = outputDir.resolve(path)
+    if (!p.getParent().toFile().exists()) {
+      Files.createDirectories(p.getParent())
+    }
+    Files.write(p, text.getBytes(StandardCharsets.UTF_8))
+  }
+
   def main(args: Array[String]): Unit = {
-    val path = args.head
-    val repository = new File(path)
-    val outputBase = repository.getPath() + "/.out"
-    val genres = listFilesRecursive(repository, "genre.json")
-      .map(f => {
+    val novelRepository = new File(args.head)
+    val outputDir = Paths.get(args.head).resolve(".out")
+    val db = new Database(Paths.get(novelRepository.getPath()))
+
+    val genres = listFilesRecursive(novelRepository, "genre.json")
+      .map(f =>
         decode[GenreJson](Source.fromFile(f).mkString) match {
           case Right(some) =>
             if (some.is_fan_fiction)
@@ -34,69 +46,24 @@ object Main {
               Some(Original(f.getParentFile()))
           case Left(_) => None
         }
-      })
+      )
       .flatten
-    genres.foreach(genre => {
-      val works = listFilesRecursive(genre.directory, "work.json")
-        .map(f =>
-          decode[NovelInfoJson](Source.fromFile(f).mkString) match {
-            case Right(v) => {
-              val date = v.date.map(Date(_))
-              val info = NovelInfo(v.title, v.caption, v.tag.fold(Seq.empty[Tag])(_.map(Tag(_))), date)
-              val texts = v.files
-                .fold(Array(f.getParent() + "/text.txt"))(_.map(f.getParent() + "/" + _))
-                .map(Source.fromFile(_).mkString)
-              Some(Novel(texts, Util.camelCaseToSnakeCase(f.getParentFile().getName()), info, genre))
+    db.addGenre(genres: _*)
+    val works = genres
+      .map(genre =>
+        listFilesRecursive(genre.directory, "work.json")
+          .map(f =>
+            decode[NovelInfoJson](Source.fromFile(f).mkString) match {
+              case Right(v) => Some(Novel(f.getParentFile().toPath(), v.toNovelInfo, genre))
+              case Left(e)  => None
             }
-            case Left(e) => None
-          }
-        )
-        .flatten
-        .sortWith((a, b) => a.info.date > b.info.date)
-      works.foreach(w => {
-        val dir = Paths.get(outputBase, w.outputPath())
-        if (!Files.exists(dir)) Files.createDirectories(dir)
-        w.toHtmls()
-          .zipWithIndex
-          .foreach((html, i) =>
-            Files.write(dir.resolve(if (i == 0) "index.html" else s"$i.html"), html.getBytes(StandardCharsets.UTF_8))
           )
-      })
-      // genre page
-      val dir = Paths.get(outputBase, genre.path)
-      if (!Files.exists(dir)) Files.createDirectories(dir)
-      val genreHtml = Util.htmlPage(
-        genre.name + " | work.sayonara.voyage",
-        s"""
-        <h1>${genre.name}</h1>
-        ${works
-            .map(v => {
-              s"""
-            <div class="work_info">
-            <h2><a href=\"${v.path}\">${v.info.title}</a></h2>
-            ${v.info.caption.fold("")(c => s"<p class=\"caption\">${c.replaceAll("\n", "<br>")}</p>")}
-            <div class="tags">${v.info.tag.map(_.htmlTag).mkString(" ")}</div>
-            ${v.info.date.fold("")(date => s"""<p class="date">${date.year}/${date.month}/${date.day}</p>""")}
-            <hr>
-            </div>
-            """
-            })
-            .mkString}
-      <div class="info">
-      <p><a href="/">Top</a><p>
-      </div>
-      """
+          .flatten
       )
-      Files.write(dir.resolve("index.html"), genreHtml.getBytes(StandardCharsets.UTF_8))
-
-      println(s"--- ${genre.name} (${works.length})")
-      println(
-        works
-          .map(w => s"${w.info.title} (${w.info.tag.mkString(",")})")
-          .mkString("\n")
-      )
-    })
-
+      .flatten
+    db.addNovel(works: _*)
+    genres.map(g => GenrePageGenerator.generate(g, db)).flatten.map((p, f) => writeFile(p, f, outputDir))
+    works.map(w => NovelPageGenerator.generate(w, db)).flatten.map((p, f) => writeFile(p, f, outputDir))
     // index html
     val index = Util.htmlPage(
       "work.sayonara.voyage",
@@ -117,6 +84,6 @@ ${genres.filter(!_.is_fan_fiction).map(g => s"<li><a href=\"${g.path}\">${g.name
 ${genres.filter(_.is_fan_fiction).map(g => s"<li><a href=\"${g.path}\">${g.name}</a></li>").mkString("\n")}
 </ul>"""
     )
-    Files.write(Paths.get(outputBase).resolve("index.html"), index.getBytes(StandardCharsets.UTF_8))
+    Files.write(outputDir.resolve("index.html"), index.getBytes(StandardCharsets.UTF_8))
   }
 }
