@@ -53,10 +53,8 @@ object Main {
       .map(genre =>
         listFilesRecursive(genre.directory, "work.json")
           .map(f =>
-            decode[NovelInfoJson](Source.fromFile(f).mkString) match {
-              case Right(v) => Some(Novel(f.getParentFile().toPath(), v.toNovelInfo, genre))
-              case Left(e)  => None
-            }
+            decode[NovelInfoJson](Source.fromFile(f).mkString).toOption
+              .map(_.toNovel(f.getParentFile().toPath(), genre))
           )
           .flatten
       )
@@ -64,11 +62,11 @@ object Main {
     db.addNovel(works: _*)
     genres.map(g => GenrePageGenerator.generate(g, db)).flatten.map((p, f) => writeFile(p, f, outputDir))
     works.map(w => NovelPageGenerator.generate(w, db)).flatten.map((p, f) => writeFile(p, f, outputDir))
+    db.getTags.map(t => TagPageGenerator.generate(t, db)).flatten.map((p, f) => writeFile(p, f, outputDir))
     // index html
     val index = Util.htmlPage(
-      "work.sayonara.voyage",
-      s"""<h1>work.sayonara.voyage</h1>
-<h2>サイト概要</h2>
+      "sayonara-voyage",
+      s"""<h2>サイト概要</h2>
 <p>藤谷光の作品サイトです。</p>
 <ul>
   <li><a href="https://sayonara.voyage">Webサイト</a></li>

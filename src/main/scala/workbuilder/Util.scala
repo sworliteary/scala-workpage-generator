@@ -19,8 +19,14 @@ object Util {
   <link rel="stylesheet" href="/index.css"/>
 </head>
 <body>
+<div class="header">
+  <h1><a href="/">Sayonara VoyagE</a></h1>
+</div>
 $body
-<p class="copywrite">&copy; 2022 Hikari Hujiya</p>
+<div class="footer">
+  <p class="top_link"><a href="/">Top</a></p>
+  <p class="copywrite">&copy; 2022 Hikari Hujiya</p>
+</div>
 </body>
 </html>  
 """

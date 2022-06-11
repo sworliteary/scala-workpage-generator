@@ -36,14 +36,11 @@ case class Fanfiction(_name: String, _path: String, f: File) extends Genre {
 object GenrePageGenerator extends PageGenerator[Genre] {
   def generate(source: Genre, database: Database): Map[Path, String] = {
     def path = Paths.get(source.path).resolve("index.html")
-    def works = database.getNovels.filter(_.genre == source).sortBy(_.info.date).reverse
+    def works = database.getNovels.filter(_.genre == source).sortBy(_.date).reverse
     val html = Util.htmlPage(
       source.name + " | sayonara-voyage",
       s"""<h1>${source.name}</h1>
       |${works.map(_.htmlTag).mkString}
-      |<div class="info">
-      |<p><a href="/">Top</a><p>
-      |</div>
       """.stripMargin
     )
     Map(path -> html)

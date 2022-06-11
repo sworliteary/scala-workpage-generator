@@ -12,7 +12,7 @@ class Database(val repository: Path) {
 
   def addNovel(novel: Novel*) = {
     novels.appendAll(novel)
-    tags.addAll(novel.map(_.info.tag).flatten)
+    tags.addAll(novel.map(_.tag).flatten)
   }
 
   def getGenres = genres.toList
