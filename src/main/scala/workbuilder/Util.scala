@@ -25,7 +25,7 @@ object Util {
 </div>
 $body
 <div class="footer">
-  <p class="copywrite">&copy; 2022 Hikari Hujiya</p>
+  <p class="copywrite">2022 Hikari Hujiya</p>
 </div>
 </body>
 </html>  
