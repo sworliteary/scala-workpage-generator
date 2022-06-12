@@ -9,7 +9,9 @@
         "editor.formatOnSave": true
     },
     "cSpell.words": [
+        "Charsets",
         "Fanfiction",
         "workbuilder"
-    ]
+    ],
+    "cSpell.enableFiletypes": [".scala", ".md"]
 }

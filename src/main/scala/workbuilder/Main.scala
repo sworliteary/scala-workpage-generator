@@ -15,16 +15,24 @@ import scala.io.Source
 import collection.JavaConverters._
 import math.Ordered.orderingToOrdered
 
+import workbuilder.pages.AllTagPageObject
+import workbuilder.pages.RecentlyPageObject
+import workbuilder.pages.IndexPageObject
+
 object Main {
-  def listFilesRecursive(dir: File, fileName: String): Array[File] = {
+  def listFilesRecursive(dir: File, fileName: String): Seq[File] = {
     val these = dir.listFiles.filter(_.getPath.endsWith(fileName))
     these ++ dir.listFiles
       .filter(_.isDirectory)
       .flatMap(d => listFilesRecursive(d, fileName))
   }
 
-  def writeFile(path: Path, text: String, outputDir: Path) = {
-    val p = outputDir.resolve(path)
+  def genPage[T, U >: T](database: Database, source: T*)(implicit generator: PageGenerator[U]) = {
+    source.map(s => generator.generate(s, database)).flatten
+  }
+
+  def writeFile(baseDir: Path)(path: Path, text: String) = {
+    val p = baseDir.resolve(path)
     if (!p.getParent().toFile().exists()) {
       Files.createDirectories(p.getParent())
     }
@@ -33,7 +41,7 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     val novelRepository = new File(args.head)
-    val outputDir = Paths.get(args.head).resolve(".out")
+    val baseDir = Paths.get(args.head).resolve(".out")
     val db = new Database(Paths.get(novelRepository.getPath()))
 
     val genres = listFilesRecursive(novelRepository, "genre.json")
@@ -60,28 +68,12 @@ object Main {
       )
       .flatten
     db.addNovel(works: _*)
-    genres.map(g => GenrePageGenerator.generate(g, db)).flatten.map((p, f) => writeFile(p, f, outputDir))
-    works.map(w => NovelPageGenerator.generate(w, db)).flatten.map((p, f) => writeFile(p, f, outputDir))
-    db.getTags.map(t => TagPageGenerator.generate(t, db)).flatten.map((p, f) => writeFile(p, f, outputDir))
-    // index html
-    val index = Util.htmlPage(
-      "sayonara-voyage",
-      s"""<h2>サイト概要</h2>
-<p>藤谷光の作品サイトです。</p>
-<ul>
-  <li><a href="https://sayonara.voyage">Webサイト</a></li>
-  <li><a href="https://twitter.com/sworliteary">Twitter</a></li>
-</ul>
-<h2>作品</h2>
-<h3>オリジナル</h3>
-<ul>
-${genres.filter(!_.is_fan_fiction).map(g => s"<li><a href=\"${g.path}\">${g.name}</a></li>\n").mkString("\n")}
-</ul>
-<h3>二次創作</h3>
-<ul>
-${genres.filter(_.is_fan_fiction).map(g => s"<li><a href=\"${g.path}\">${g.name}</a></li>").mkString("\n")}
-</ul>"""
-    )
-    Files.write(outputDir.resolve("index.html"), index.getBytes(StandardCharsets.UTF_8))
+    val wf = writeFile(baseDir)
+    genPage(db, works: _*).map((p, f) => wf(p, f))
+    genPage(db, genres: _*).map((p, f) => wf(p, f))
+    genPage(db, db.getTags: _*).map((p, f) => wf(p, f))
+    genPage(db, AllTagPageObject).map((p, f) => wf(p, f))
+    genPage(db, RecentlyPageObject).map((p, f) => wf(p, f))
+    genPage(db, IndexPageObject).map((p, f) => wf(p, f))
   }
 }
