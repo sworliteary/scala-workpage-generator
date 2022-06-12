@@ -4,7 +4,8 @@ object Util {
   def camelCaseToSnakeCase(name: String): String = {
     name.zipWithIndex
       .map((v, i) =>
-        if (!v.isUpper) v.toString()
+        if (v == '-') "_"
+        else if (!v.isUpper) v.toString()
         else if (i == 0 || name(i - 1) == '_') v.toLower.toString()
         else "_" + v.toLower.toString()
       )
@@ -24,7 +25,6 @@ object Util {
 </div>
 $body
 <div class="footer">
-  <p class="top_link"><a href="/">Top</a></p>
   <p class="copywrite">&copy; 2022 Hikari Hujiya</p>
 </div>
 </body>
