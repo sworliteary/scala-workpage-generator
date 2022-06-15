@@ -3,7 +3,7 @@ package workbuilder.pages
 import java.nio.file.Paths
 import workbuilder.PageGenerator
 import workbuilder.Database
-import workbuilder.Util
+import workbuilder.Template
 import workbuilder.Genre
 import java.nio.file.Path
 
@@ -18,7 +18,7 @@ object IndexPage {
     def generate(_s: IndexPage, database: Database): Map[Path, String] = {
       val genres = database.getGenres
       def genreTag(g: Genre) = s"<li><a href=\"${g.path}\">${g.name}</a></li>"
-      val html = Util.htmlPage(
+      val html = Template.htmlPage(
         "サヨナラボイジャー",
         s"""<h2>サイト概要</h2>
           |<p>藤谷光の作品サイトです。</p>
@@ -26,7 +26,6 @@ object IndexPage {
           |  <li><a href="https://sayonara.voyage">Webサイト</a></li>
           |  <li><a href="https://twitter.com/sworliteary">Twitter</a></li>
           |</ul>
-          |<h2>作品</h2>
           |<h3>オリジナル</h3>
           |<ul>
           |${genres.filter(!_.is_fan_fiction).map(genreTag).mkString("\n")}
