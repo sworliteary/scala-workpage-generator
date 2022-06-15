@@ -5,7 +5,12 @@ import java.nio.file.Paths
 
 case class Tag(name: String) {
   def path = "tags/" + name
-  def htmlTag = s"<span class=\"tag\"><a href=\"/$path\">#$name</a></span>"
+  def htmlTag(num: Option[Int] = None) =
+    num match {
+      case Some(i) => s"<span class=\"tag\"><a href=\"/$path\">#$name ($i)</a></span>"
+      case None    => s"<span class=\"tag\"><a href=\"/$path\">#$name</a></span>"
+    }
+
 }
 
 object Tag {

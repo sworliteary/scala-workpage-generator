@@ -38,7 +38,7 @@ case class Novel(
     |<div class="work_info">
     |<h2><a href="/${outputPath}">${title}</a></h2>
     |${if (showCaption) caption.fold("")(c => s"<p class=\"caption\">${c.replaceAll("\n", "<br>")}</p>") else ""}
-    |<div class="tags">${tag.map(_.htmlTag).mkString}</div>
+    |<div class="tags">${tag.map(_.htmlTag()).mkString}</div>
     |${if (showGenre) s"<p class=\"genre\"><a href=\"/${genre.path}\">${genre.name}</a></p>" else ""}
     |${date.fold("")(date => s"""<p class="date">${date.year}/${date.month}/${date.day}</p>""")}
     |<hr>
@@ -83,7 +83,7 @@ object Novel {
           |${toc(i)}
           |<hr>
           |<div class="info">
-          |  <div class="tag">${source.tag.map(_.htmlTag).mkString}</div>
+          |  <div class="tag">${source.tag.map(_.htmlTag()).mkString}</div>
           |  <p><a href="/${source.genre.path}">${source.genre.name} 作品一覧</a></p>
           |</div>""".stripMargin
           )
