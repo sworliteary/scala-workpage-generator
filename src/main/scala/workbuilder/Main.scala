@@ -27,8 +27,8 @@ object Main {
       .flatMap(d => listFilesRecursive(d, fileName))
   }
 
-  def genPage[T, U >: T](database: Database, source: T*)(implicit generator: PageGenerator[U]) = {
-    source.map(s => generator.generate(s, database)).flatten
+  def genPage[T, U >: T](baseDir: Path)(database: Database, source: T*)(implicit generator: PageGenerator[U]) = {
+    source.map(s => generator.generate(s, database)).flatten.map((p, s) => writeFile(baseDir)(p, s))
   }
 
   def writeFile(baseDir: Path)(path: Path, text: String) = {
@@ -68,12 +68,11 @@ object Main {
       )
       .flatten
     db.addNovel(works: _*)
-    val wf = writeFile(baseDir)
-    genPage(db, works: _*).map((p, f) => wf(p, f))
-    genPage(db, genres: _*).map((p, f) => wf(p, f))
-    genPage(db, db.getTags: _*).map((p, f) => wf(p, f))
-    genPage(db, AllTagPageObject).map((p, f) => wf(p, f))
-    genPage(db, RecentlyPageObject).map((p, f) => wf(p, f))
-    genPage(db, IndexPageObject).map((p, f) => wf(p, f))
+    genPage(baseDir)(db, works: _*)
+    genPage(baseDir)(db, genres: _*)
+    genPage(baseDir)(db, db.getTags: _*)
+    genPage(baseDir)(db, AllTagPageObject)
+    genPage(baseDir)(db, RecentlyPageObject)
+    genPage(baseDir)(db, IndexPageObject)
   }
 }

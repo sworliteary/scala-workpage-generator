@@ -33,10 +33,11 @@ case class Novel(
     files: Seq[String],
     date: Option[Date]
 ) {
-  def htmlTag(showGenre: Boolean = false) = s"""
+  // TODO: showGenreとshowCaptionを適切にパラメータ化すること
+  def htmlTag(showGenre: Boolean = false, showCaption: Boolean = true) = s"""
     |<div class="work_info">
     |<h2><a href="/${outputPath}">${title}</a></h2>
-    |${caption.fold("")(c => s"<p class=\"caption\">${c.replaceAll("\n", "<br>")}</p>")}
+    |${if (showCaption) caption.fold("")(c => s"<p class=\"caption\">${c.replaceAll("\n", "<br>")}</p>") else ""}
     |<div class="tags">${tag.map(_.htmlTag).mkString}</div>
     |${if (showGenre) s"<p class=\"genre\"><a href=\"/${genre.path}\">${genre.name}</a></p>" else ""}
     |${date.fold("")(date => s"""<p class="date">${date.year}/${date.month}/${date.day}</p>""")}
@@ -74,7 +75,7 @@ object Novel {
           val text = Source.fromFile(source.path.resolve(f).toString()).mkString
           val path = Paths.get(source.outputPath).resolve(fileName(i))
           val pageTitle = if (length == 1) s"${source.title}" else s"${source.title} (${i + 1})"
-          val html = Util.htmlPage(
+          val html = Template.htmlPage(
             pageTitle + " | サヨナラボイジャー",
             s"""<h1 class="title">${source.title}</h1>
           |${toc(i)}
