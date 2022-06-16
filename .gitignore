@@ -29,3 +29,12 @@ project/plugins/project/
 # End of https://www.toptal.com/developers/gitignore/api/scala,SBT,metals
 
 .out/*
+
+### Firebase ###
+.idea
+**/node_modules/*
+**/.firebaserc
+
+### Firebase Patch ###
+.runtimeconfig.json
+.firebase/
