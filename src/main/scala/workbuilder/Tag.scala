@@ -2,13 +2,16 @@ package workbuilder
 
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.charset.StandardCharsets
+import java.net.URLEncoder
 
 case class Tag(name: String) {
-  def path = "tags/" + name
+  // 実装移すときはここを再実装する必要あり
+  def path = "tags/" + name.hashCode().toHexString
   def htmlTag(num: Option[Int] = None) =
     num match {
-      case Some(i) => s"<span class=\"tag\"><a href=\"/$path\">#$name ($i)</a></span>"
-      case None    => s"<span class=\"tag\"><a href=\"/$path\">#$name</a></span>"
+      case Some(i) => s"<span class=\"tag\"><a href=\"/$path/\">#$name ($i)</a></span>"
+      case None    => s"<span class=\"tag\"><a href=\"/$path/\">#$name</a></span>"
     }
 
 }
