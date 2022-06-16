@@ -41,7 +41,7 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     val novelRepository = new File(args.head)
-    val db = new Database(Paths.get(novelRepository.getPath()))
+    val db = new Database
 
     val genres = listFilesRecursive(novelRepository, "genre.json")
       .map(f =>
