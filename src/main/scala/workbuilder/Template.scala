@@ -23,6 +23,7 @@ object Template {
 $body
 <div class="footer">
   <p class="copywrite">2022 Hikari Hujiya</p>
+  <p><a href="https://forms.gle/h8L5MZdDbPatCq2G8">作品への感想</a> / <a href="mailto:shnovels@gmail.com">お問い合わせ</a></p>
 </div>
 </body>
 </html>  
