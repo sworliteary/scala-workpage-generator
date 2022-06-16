@@ -36,11 +36,13 @@ case class Novel(
   // TODO: showGenreとshowCaptionを適切にパラメータ化すること
   def htmlTag(showGenre: Boolean = false, showCaption: Boolean = true) = s"""
     |<div class="work_info">
-    |<h2><a href="/${outputPath}">${title}</a></h2>
-    |${if (showCaption) caption.fold("")(c => s"<p class=\"caption\">${c.replaceAll("\n", "<br>")}</p>") else ""}
-    |<div class="tags">${tag.map(_.htmlTag()).mkString}</div>
-    |${if (showGenre) s"<p class=\"genre\"><a href=\"/${genre.path}\">${genre.name}</a></p>" else ""}
-    |${date.fold("")(date => s"""<p class="date">${date.year}/${date.month}/${date.day}</p>""")}
+    |  <h2><a href="/${outputPath}">${title}</a></h2>
+    |  <div class="info">
+    |    ${date.fold("")(date => s"""<p class="date">${date.year}/${date.month}/${date.day}</p>""")}
+    |    ${if (showCaption) caption.fold("")(c => s"<p class=\"caption\">${c.replaceAll("\n", "<br>")}</p>") else ""}
+    |    <div class="tags">${tag.map(_.htmlTag()).mkString}</div>
+    |    ${if (showGenre) s"<p class=\"genre\"><a href=\"/${genre.path}\">${genre.name}</a></p>" else ""}
+    |  </div>
     |<hr>
     |</div>""".stripMargin
 
@@ -65,7 +67,7 @@ object Novel {
             </div>"""
         }
       def toHtmlText(text: String): String = text
-        .split("\n\n")
+        .split("\n\n+")
         .map(l =>
           s"\n<p>${l.replaceAll("(.)\n", "$1<br/>\n").replaceAll("｜([^《]*)《([^》]*)》", "<ruby>$1<rt>$2</rt></ruby>")}</p>\n"
         )
@@ -82,7 +84,7 @@ object Novel {
           |<div class="text">${toHtmlText(text)}</div>
           |${toc(i)}
           |<hr>
-          |<div class="info">
+          |<div class="work_footer_info">
           |  <div class="tag">${source.tag.map(_.htmlTag()).mkString}</div>
           |  <p><a href="/${source.genre.path}">${source.genre.name} 作品一覧</a></p>
           |</div>""".stripMargin
