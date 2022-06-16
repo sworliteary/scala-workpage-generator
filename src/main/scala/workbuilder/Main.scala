@@ -41,7 +41,6 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     val novelRepository = new File(args.head)
-    val baseDir = Paths.get(args.head).resolve(".out")
     val db = new Database(Paths.get(novelRepository.getPath()))
 
     val genres = listFilesRecursive(novelRepository, "genre.json")
@@ -68,11 +67,14 @@ object Main {
       )
       .flatten
     db.addNovel(works: _*)
-    genPage(baseDir)(db, works: _*)
-    genPage(baseDir)(db, genres: _*)
-    genPage(baseDir)(db, db.getTags: _*)
-    genPage(baseDir)(db, AllTagPageObject)
-    genPage(baseDir)(db, RecentlyPageObject)
-    genPage(baseDir)(db, IndexPageObject)
+
+    val outDir = Paths.get(".out")
+    FileUtils.copyDirectory(File("static"), File(".out"))
+    genPage(outDir)(db, works: _*)
+    genPage(outDir)(db, genres: _*)
+    genPage(outDir)(db, db.getTags: _*)
+    genPage(outDir)(db, AllTagPageObject)
+    genPage(outDir)(db, RecentlyPageObject)
+    genPage(outDir)(db, IndexPageObject)
   }
 }

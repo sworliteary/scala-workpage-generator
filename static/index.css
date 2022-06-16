@@ -1,0 +1,136 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap");
+
+/*** グローバル設定 ***/
+
+body {
+  max-width: 50rem;
+  margin: 0rem auto;
+  padding: 0 1rem;
+  font-family: serif;
+}
+
+a {
+  color: #202124;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+hr {
+  margin: 1rem 0.5rem 1rem 0.5rem;
+  border-width: 0 0 1px;
+  border-image: linear-gradient(
+      90deg,
+      hsl(0deg 0% 0% / 0%),
+      hsl(0deg 0% 53% / 50%) 50%,
+      hsla(0, 0%, 100%, 0) 100%
+    )
+    0 0 100%;
+  border-style: solid;
+}
+
+h1 {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.text {
+  max-width: 40rem;
+  margin: 3rem auto;
+}
+
+/*** 各コンポーネント ***/
+
+.header {
+  margin-bottom: 3rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  text-align: center;
+  font-family: "Dancing Script", cursive;
+}
+
+.header .menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.footer {
+  text-align: center;
+}
+
+.tag {
+  font-size: 0.9rem;
+  margin-left: 0.45rem;
+  color: #43454a;
+  display: inline-block;
+}
+
+/** 作品一覧ページ **/
+
+.work_info {
+  margin: 0 auto;
+  max-width: 35rem;
+  font-size: 0.9rem;
+}
+
+.work_info h2 {
+  font-size: 1.1rem;
+}
+
+.work_info .info {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.work_info .date, .work_info .genre, .work_info .tags {
+  text-align: right;
+  margin: 0 0rem 0 1rem;
+}
+
+/** 本文ページ **/
+
+.text p {
+  margin-top: 2rem;
+}
+
+.work_footer_info {
+  text-align: right;
+}
+
+.work_footer_info p {
+  margin: 0;
+}
+
+.toc {
+  text-align: right;
+}
+
+/*** ダークモード対応 ***/
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #202124;
+    color: #bdc1c6;
+  }
+  a {
+    color: #bdc1c6;
+  }
+  hr {
+    margin: 1rem 0.5rem 2rem 0.5rem;
+    border-width: 0 0 1px;
+    border-image: linear-gradient(
+        90deg,
+        hsla(0, 0%, 100%, 0),
+        hsla(0, 0%, 100%, 0.5) 50%,
+        hsla(0, 0%, 100%, 0) 100%
+      )
+      0 0 100%;
+    border-style: solid;
+  }
+}
