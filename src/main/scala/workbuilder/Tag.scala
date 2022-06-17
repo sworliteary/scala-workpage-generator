@@ -22,7 +22,7 @@ object Tag {
       val novels = database.getNovels.filter(_.hasTag(source)).sortBy(_.date).reverse
       val path = Paths.get(source.path).resolve("index.html")
       val html = Template.htmlPage(
-        s"tag: ${source.name} | サヨナラボイジャー",
+        s"tag: ${source.name}",
         s"""<h1>Tag: ${source.name}</h1>
           |${novels.map(_.htmlTag(true)).mkString}""".stripMargin
       )

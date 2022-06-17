@@ -8,9 +8,9 @@ object Template {
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <title>${title}</title>
+  <title>${makeTitle(title)}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <link rel="stylesheet" href="/index.css"/>
+  <link rel="stylesheet" href="/index.css" />
 </head>
 <body>
 <div class="header">

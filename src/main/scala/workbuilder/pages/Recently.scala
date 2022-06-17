@@ -17,7 +17,7 @@ object RecentlyPage {
     def generate(source: RecentlyPage, database: Database): Map[Path, String] = {
       val novels = database.getNovels.sortBy(_.date).reverse.slice(0, 10)
       val html = Template.htmlPage(
-        "最近の投稿 | サヨナラボイジャー",
+        "最近の投稿",
         s"""<h1>最近の投稿</h1>
            |${novels.map(_.htmlTag(true).mkString).mkString}""".stripMargin
       )

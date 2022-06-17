@@ -78,7 +78,7 @@ object Novel {
           val path = Paths.get(source.outputPath).resolve(fileName(i))
           val pageTitle = if (length == 1) s"${source.title}" else s"${source.title} (${i + 1})"
           val html = Template.htmlPage(
-            pageTitle + " | サヨナラボイジャー",
+            pageTitle,
             s"""<h1 class="title">${source.title}</h1>
           |${toc(i)}
           |<div class="text">${toHtmlText(text)}</div>

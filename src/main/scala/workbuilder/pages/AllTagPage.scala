@@ -17,7 +17,7 @@ object AllTagPage {
       val path = Paths.get("tags/index.html")
       val novels = database.getNovels
       val html = Template.htmlPage(
-        "tags | サヨナラボイジャー",
+        "タグ一覧",
         s"""
         |<h1>Tags</h1>
         |${database.getTags

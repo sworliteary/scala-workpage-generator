@@ -39,7 +39,7 @@ object Genre {
       def path = Paths.get(source.path).resolve("index.html")
       def works = database.getNovels.filter(_.genre == source).sortBy(_.date).reverse
       val html = Template.htmlPage(
-        source.name + " | サヨナラボイジャー",
+        source.name,
         s"""<h1>${source.name}</h1>
       |${works.map(_.htmlTag()).mkString}
       """.stripMargin
