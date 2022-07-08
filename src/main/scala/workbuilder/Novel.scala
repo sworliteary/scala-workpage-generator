@@ -38,10 +38,10 @@ case class Novel(
     |<div class="work_info">
     |  <h2><a href="/${outputPath}">${title}</a></h2>
     |  <div class="info">
-    |    ${date.fold("")(date => s"""<p class="date">${date.year}/${date.month}/${date.day}</p>""")}
-    |    ${if (showCaption) caption.fold("")(c => s"<p class=\"caption\">${c.replaceAll("\n", "<br>")}</p>") else ""}
+    |    ${date.fold("")(date => s"""<p class="date">投稿日: ${date.year}/${f"${date.month}%02d"}/${f"${date.day}%02d"}</p>""")}
+    |    ${if (showGenre) s"<p class=\"genre\">ジャンル: <a href=\"/${genre.path}\">${genre.name}</a></p>" else ""}
     |    <div class="tags">${tag.map(_.htmlTag()).mkString}</div>
-    |    ${if (showGenre) s"<p class=\"genre\"><a href=\"/${genre.path}\">${genre.name}</a></p>" else ""}
+    |    ${if (showCaption && caption.isDefined) s"<div class=\"caption\"><p>${caption.get.replaceAll("\n", "<br>")}</p></div>" else ""}
     |  </div>
     |<hr>
     |</div>""".stripMargin
@@ -80,14 +80,15 @@ object Novel {
           val html = Template.htmlPage(
             pageTitle,
             s"""<h1 class="title">${source.title}</h1>
+          |<div class="work_header_info">
+          |  ${source.date.fold("")(date => s"""<p class="date">投稿日: ${date.year}/${f"${date.month}%02d"}/${f"${date.day}%02d"}</p>""")}
+          |  <p>ジャンル: <a href="/${source.genre.path}">${source.genre.name}</a></p>
+          |  <div class="tag">${source.tag.map(_.htmlTag()).mkString}</div>
+          |</div>
           |${toc(i)}
           |<div class="text">${toHtmlText(text)}</div>
           |${toc(i)}
-          |<hr>
-          |<div class="work_footer_info">
-          |  <div class="tag">${source.tag.map(_.htmlTag()).mkString}</div>
-          |  <p><a href="/${source.genre.path}">${source.genre.name} 作品一覧</a></p>
-          |</div>""".stripMargin
+          |""".stripMargin
           )
           (path -> html)
         })
