@@ -18,3 +18,4 @@ lazy val root = (project in file("."))
       "io.circe" %% "circe-parser"
     ).map(_ % circeVersion)
   )
+  .enablePlugins(SbtTwirl)
