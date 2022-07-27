@@ -76,5 +76,6 @@ object Main {
     genPage(outDir)(db, AllTagPageObject)
     genPage(outDir)(db, RecentlyPageObject)
     genPage(outDir)(db, IndexPageObject)
+    println(html.index("test", "<h1>aaa</h1>"))
   }
 }
