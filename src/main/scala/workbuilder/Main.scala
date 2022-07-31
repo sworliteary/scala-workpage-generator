@@ -18,6 +18,7 @@ import math.Ordered.orderingToOrdered
 import workbuilder.pages.AllTagPageObject
 import workbuilder.pages.RecentlyPageObject
 import workbuilder.pages.IndexPageObject
+import workbuilder.html
 
 object Main {
   def listFilesRecursive(dir: File, fileName: String): Seq[File] = {
@@ -76,6 +77,5 @@ object Main {
     genPage(outDir)(db, AllTagPageObject)
     genPage(outDir)(db, RecentlyPageObject)
     genPage(outDir)(db, IndexPageObject)
-    println(html.index("test", "<h1>aaa</h1>"))
   }
 }
