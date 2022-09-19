@@ -10,8 +10,8 @@ case class Tag(name: String) {
   def path = "tags/" + name.hashCode().toHexString
   def htmlTag(num: Option[Int] = None) =
     num match {
-      case Some(i) => s"<span class=\"tag\"><a href=\"/$path/\">#$name ($i)</a></span>"
-      case None    => s"<span class=\"tag\"><a href=\"/$path/\">#$name</a></span>"
+      case Some(i) => s"<span class=\"tag\"><a href=\"/$path/\">#<span class=\"tag_content\">$name</span> ($i)</a></span>"
+      case None    => s"<span class=\"tag\"><a href=\"/$path/\">#<span class=\"tag_content\">$name</span></a></span>"
     }
 
 }
