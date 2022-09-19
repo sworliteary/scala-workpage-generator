@@ -10,7 +10,8 @@ case class NovelInfoJson(
     date: Option[String],
     tag: Option[Seq[String]],
     files: Option[Seq[String]],
-    caption: Option[String]
+    caption: Option[String],
+    draft: Option[Boolean]
 ) {
   def toNovel(path: Path, genre: Genre) =
     Novel(
@@ -20,7 +21,8 @@ case class NovelInfoJson(
       caption,
       tag.fold(Seq.empty[Tag])(_.map(Tag(_))),
       files.getOrElse[Seq[String]](Seq("text.txt")),
-      date.map(Date(_))
+      date.map(Date(_)),
+      draft.isDefined
     )
 }
 
@@ -31,7 +33,8 @@ case class Novel(
     caption: Option[String],
     tag: Seq[Tag],
     files: Seq[String],
-    date: Option[Date]
+    date: Option[Date],
+    draft: Boolean
 ) {
   // TODO: showGenreとshowCaptionを適切にパラメータ化すること
   def htmlTag(showGenre: Boolean = false, showCaption: Boolean = true) = s"""

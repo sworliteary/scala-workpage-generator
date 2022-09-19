@@ -65,6 +65,7 @@ object Main {
               .map(_.toNovel(f.getParentFile().toPath(), genre))
           )
           .flatten
+          .filter(!_.draft)
       )
       .flatten
     db.addNovel(works: _*)
