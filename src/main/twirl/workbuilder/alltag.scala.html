@@ -1,0 +1,11 @@
+@import workbuilder.Tag
+@import workbuilder.Novel
+@import workbuilder.partial
+@(tags: List[Tag], novels: List[Novel])
+
+@baseof(title = "タグ一覧") {
+<h1>Tags</h1>
+@for(t <- tags.sortBy(_.name)) {
+    @partial.html.tag(t, Some(novels.filter(_.hasTag(t)).size))
+}
+}
