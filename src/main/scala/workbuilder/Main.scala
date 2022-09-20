@@ -70,8 +70,9 @@ object Main {
       .flatten
     db.addNovel(works: _*)
 
-    val outDir = Paths.get(".out")
-    FileUtils.copyDirectory(File("static"), File(".out"))
+    val outDir = Paths.get("public")
+    FileUtils.copyDirectory(File("static"), outDir.toFile(), true)
+    // println(html.index(genres.toList))
     genPage(outDir)(db, works: _*)
     genPage(outDir)(db, genres: _*)
     genPage(outDir)(db, db.getTags: _*)
