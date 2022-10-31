@@ -1,9 +1,16 @@
 package workbuilder
 
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
+
 import scala.math.Ordering
 import scala.io.Source
 import java.nio.file.Path
 import java.nio.file.Paths
+
+import workbuilder.Genre._
 
 case class NovelInfoJson(
     title: String,
@@ -34,14 +41,21 @@ case class Novel(
     date: Option[Date]
 ) {
   // TODO: showGenreとshowCaptionを適切にパラメータ化すること
-  def htmlTag(showGenre: Boolean = false, showCaption: Boolean = true) = s"""
+  def htmlTag(showGenre: Boolean = false, showCaption: Boolean = true) =
+    s"""
     |<div class="work_info">
     |  <h2><a href="/${outputPath}">${title}</a></h2>
     |  <div class="info">
-    |    ${date.fold("")(date => s"""<p class="date">投稿日: ${date.year}/${f"${date.month}%02d"}/${f"${date.day}%02d"}</p>""")}
+    |    ${date.fold("")(date =>
+        s"""<p class="date">投稿日: ${date.year}/${f"${date.month}%02d"}/${f"${date.day}%02d"}</p>"""
+      )}
     |    ${if (showGenre) s"<p class=\"genre\">ジャンル: <a href=\"/${genre.path}\">${genre.name}</a></p>" else ""}
     |    <div class="tags">${tag.map(_.htmlTag()).mkString}</div>
-    |    ${if (showCaption && caption.isDefined) s"<div class=\"caption\"><p>${caption.get.replaceAll("\n", "<br>")}</p></div>" else ""}
+    |    ${
+        if (showCaption && caption.isDefined)
+          s"<div class=\"caption\"><p>${caption.get.replaceAll("\n", "<br>")}</p></div>"
+        else ""
+      }
     |  </div>
     |<hr>
     |</div>""".stripMargin
@@ -55,6 +69,8 @@ object Novel {
   implicit object NovelPageGenerator extends workbuilder.PageGenerator[Novel] {
     def generate(source: Novel, database: Database): Map[Path, String] = {
       val length = source.files.length
+      Map(source.path -> source.asJson.toString)
+      /*
       val toc =
         if (length == 1) (_: Int) => ""
         else { (i: Int) =>
@@ -81,7 +97,9 @@ object Novel {
             pageTitle,
             s"""<h1 class="title">${source.title}</h1>
           |<div class="work_header_info">
-          |  ${source.date.fold("")(date => s"""<p class="date">投稿日: ${date.year}/${f"${date.month}%02d"}/${f"${date.day}%02d"}</p>""")}
+          |  ${source.date.fold("")(date =>
+                s"""<p class="date">投稿日: ${date.year}/${f"${date.month}%02d"}/${f"${date.day}%02d"}</p>"""
+              )}
           |  <p>ジャンル: <a href="/${source.genre.path}">${source.genre.name}</a></p>
           |  <div class="tag">${source.tag.map(_.htmlTag()).mkString}</div>
           |</div>
@@ -93,6 +111,7 @@ object Novel {
           (path -> html)
         })
         .toMap
+       */
     }
     private def fileName(index: Int) = if (index == 0) "index.html" else s"${index + 1}.html"
   }

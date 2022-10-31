@@ -1,5 +1,10 @@
 package workbuilder
 
+import io.circe._
+import io.circe.parser._
+import io.circe.syntax._
+import io.circe.generic.semiauto._
+
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -36,15 +41,10 @@ case class Fanfiction(_name: String, _path: String, f: File) extends Genre {
 object Genre {
   implicit object GenrePageGenerator extends PageGenerator[Genre] {
     def generate(source: Genre, database: Database): Map[Path, String] = {
-      def path = Paths.get(source.path).resolve("index.html")
+      def path = Paths.get(source.path).resolve("index.json")
       def works = database.getNovels.filter(_.genre == source).sortBy(_.date).reverse
-      val html = Template.htmlPage(
-        source.name,
-        s"""<h1>${source.name}</h1>
-      |${works.map(_.htmlTag()).mkString}
-      """.stripMargin
-      )
-      Map(path -> html)
+      Map(path -> works.asJson.toString)
     }
   }
+  implicit val genreEncoder: Encoder[Genre] = deriveEncoder
 }

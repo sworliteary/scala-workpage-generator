@@ -38,3 +38,4 @@ project/plugins/project/
 ### Firebase Patch ###
 .runtimeconfig.json
 .firebase/
+public/

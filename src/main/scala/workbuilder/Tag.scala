@@ -1,5 +1,10 @@
 package workbuilder
 
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
+
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.charset.StandardCharsets
@@ -10,8 +15,9 @@ case class Tag(name: String) {
   def path = "tags/" + name.hashCode().toHexString
   def htmlTag(num: Option[Int] = None) =
     num match {
-      case Some(i) => s"<span class=\"tag\"><a href=\"/$path/\">#<span class=\"tag_content\">$name</span> ($i)</a></span>"
-      case None    => s"<span class=\"tag\"><a href=\"/$path/\">#<span class=\"tag_content\">$name</span></a></span>"
+      case Some(i) =>
+        s"<span class=\"tag\"><a href=\"/$path/\">#<span class=\"tag_content\">$name</span> ($i)</a></span>"
+      case None => s"<span class=\"tag\"><a href=\"/$path/\">#<span class=\"tag_content\">$name</span></a></span>"
     }
 
 }
@@ -21,12 +27,15 @@ object Tag {
     def generate(source: Tag, database: Database): Map[Path, String] = {
       val novels = database.getNovels.filter(_.hasTag(source)).sortBy(_.date).reverse
       val path = Paths.get(source.path).resolve("index.html")
+      Map(path -> novels.asJson.toString)
+      /*
       val html = Template.htmlPage(
         s"tag: ${source.name}",
         s"""<h1>Tag: ${source.name}</h1>
           |${novels.map(_.htmlTag(true)).mkString}""".stripMargin
       )
       Map(path -> html)
+       */
     }
   }
 }
