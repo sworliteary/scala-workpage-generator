@@ -71,11 +71,10 @@ h1 {
   display: inline-block;
 }
 
-.tag_content {
+.tag_content:hover {
   text-decoration: underline;
   text-decoration-thickness: from-font;
 }
-
 
 
 /** 作品一覧ページ **/

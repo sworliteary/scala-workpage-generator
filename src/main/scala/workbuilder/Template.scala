@@ -10,8 +10,8 @@ object Template {
   <meta charset="utf-8" />
   <title>${makeTitle(title)}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" />
   <link rel="stylesheet" href="/index.css" />
-  <link rel="stylesheet" href=""https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" defer/>
 </head>
 <body>
 <div class="header">

@@ -18,6 +18,7 @@ import math.Ordered.orderingToOrdered
 import workbuilder.pages.AllTagPageObject
 import workbuilder.pages.RecentlyPageObject
 import workbuilder.pages.IndexPageObject
+import workbuilder.html
 
 object Main {
   def listFilesRecursive(dir: File, fileName: String): Seq[File] = {
@@ -64,12 +65,14 @@ object Main {
               .map(_.toNovel(f.getParentFile().toPath(), genre))
           )
           .flatten
+          .filter(!_.draft)
       )
       .flatten
     db.addNovel(works: _*)
 
     val outDir = Paths.get("public")
-    FileUtils.copyDirectory(File("static"), File("public"))
+    FileUtils.copyDirectory(File("static"), outDir.toFile(), true)
+    // println(html.index(genres.toList))
     genPage(outDir)(db, works: _*)
     genPage(outDir)(db, genres: _*)
     genPage(outDir)(db, db.getTags: _*)
