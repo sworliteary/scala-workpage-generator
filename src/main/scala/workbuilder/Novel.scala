@@ -9,6 +9,9 @@ import scala.math.Ordering
 import scala.io.Source
 import java.nio.file.Path
 import java.nio.file.Paths
+import io.circe.Encoder.AsArray.importedAsArrayEncoder
+import io.circe.Encoder.AsObject.importedAsObjectEncoder
+import io.circe.Encoder.AsRoot.importedAsRootEncoder
 
 import workbuilder.Genre._
 
@@ -19,16 +22,18 @@ case class NovelInfoJson(
     files: Option[Seq[String]],
     caption: Option[String]
 ) {
-  def toNovel(path: Path, genre: Genre) =
+  def toNovel(path: Path, genre: Genre) = {
+    val texts = files.getOrElse(Seq("text.txt")).map(f => Source.fromFile(path.resolve(f).toString()).mkString)
     Novel(
       path,
       genre,
       title,
       caption,
       tag.fold(Seq.empty[Tag])(_.map(Tag(_))),
-      files.getOrElse[Seq[String]](Seq("text.txt")),
+      texts,
       date.map(Date(_))
     )
+  }
 }
 
 case class Novel(
@@ -37,7 +42,7 @@ case class Novel(
     title: String,
     caption: Option[String],
     tag: Seq[Tag],
-    files: Seq[String],
+    texts: Seq[String],
     date: Option[Date]
 ) {
   // TODO: showGenreとshowCaptionを適切にパラメータ化すること
@@ -66,10 +71,13 @@ case class Novel(
 }
 
 object Novel {
+  implicit val novelEncoder: Encoder[Novel] =
+    Encoder.forProduct7("path", "genre", "title", "caption", "tag", "texts", "date")(s =>
+      (s.path.toString(), s.genre, s.title, s.caption, s.tag, s.texts, s.date)
+    )
   implicit object NovelPageGenerator extends workbuilder.PageGenerator[Novel] {
     def generate(source: Novel, database: Database): Map[Path, String] = {
-      val length = source.files.length
-      Map(source.path -> source.asJson.toString)
+      Map(source.path.resolve("index.json") -> source.asJson.toString)
       /*
       val toc =
         if (length == 1) (_: Int) => ""

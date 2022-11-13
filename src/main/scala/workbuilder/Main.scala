@@ -40,10 +40,10 @@ object Main {
   }
 
   def main(args: Array[String]): Unit = {
-    val novelRepository = new File(args.head)
+    val novelFolder = new File(args.head)
     val db = new Database
 
-    val genres = listFilesRecursive(novelRepository, "genre.json")
+    val genres = listFilesRecursive(novelFolder, "genre.json")
       .map(f =>
         decode[GenreJson](Source.fromFile(f).mkString) match {
           case Right(some) =>
@@ -68,8 +68,8 @@ object Main {
       .flatten
     db.addNovel(works: _*)
 
-    val outDir = Paths.get(".out")
-    FileUtils.copyDirectory(File("static"), File(".out"))
+    val outDir = Paths.get("public")
+    FileUtils.copyDirectory(File("static"), File("public"))
     genPage(outDir)(db, works: _*)
     genPage(outDir)(db, genres: _*)
     genPage(outDir)(db, db.getTags: _*)

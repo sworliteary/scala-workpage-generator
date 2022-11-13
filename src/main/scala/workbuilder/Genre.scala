@@ -46,5 +46,6 @@ object Genre {
       Map(path -> works.asJson.toString)
     }
   }
-  implicit val genreEncoder: Encoder[Genre] = deriveEncoder
+  implicit val genreEncoder: Encoder[Genre] =
+    Encoder.forProduct3("path", "name", "directory")(s => (s.path, s.name, s.directory.toString()))
 }
