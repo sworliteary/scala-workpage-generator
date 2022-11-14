@@ -76,11 +76,11 @@ case class Novel(
 object Novel {
   implicit val novelEncoder: Encoder[Novel] =
     Encoder.forProduct7("path", "genre", "title", "caption", "tag", "texts", "date")(s =>
-      (s.path.toString(), s.genre, s.title, s.caption, s.tag, s.texts, s.date)
+      (s.path.toString(), s.genre, s.title, s.caption.getOrElse(""), s.tag.map(_.name), s.texts, s.date)
     )
   implicit object NovelPageGenerator extends workbuilder.PageGenerator[Novel] {
     def generate(source: Novel, database: Database): Map[Path, String] = {
-      Map(source.path.resolve("index.json") -> source.asJson.toString)
+      Map(Paths.get(source.outputPath + ".json") -> source.asJson.toString)
       /*
       val toc =
         if (length == 1) (_: Int) => ""

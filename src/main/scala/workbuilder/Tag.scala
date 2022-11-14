@@ -26,7 +26,7 @@ object Tag {
   implicit object TagPageGenerator extends PageGenerator[Tag] {
     def generate(source: Tag, database: Database): Map[Path, String] = {
       val novels = database.getNovels.filter(_.hasTag(source)).sortBy(_.date).reverse
-      val path = Paths.get(source.path).resolve("index.html")
+      val path = Paths.get(source.path + ".json")
       Map(path -> novels.asJson.toString)
       /*
       val html = Template.htmlPage(
