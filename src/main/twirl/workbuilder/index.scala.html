@@ -1,0 +1,11 @@
+@import workbuilder.Genre
+@(genres: List[Genre])
+
+@baseof(title = "Sayonara Voyage") {
+<h3>ジャンル</h3>
+<ul>
+@for(genre <- genres) {
+    <li><a href="/@genre.path">@genre.name</a></li>
+}
+<ul>
+}

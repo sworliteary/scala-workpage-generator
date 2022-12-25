@@ -3,10 +3,10 @@
 /*** グローバル設定 ***/
 
 body {
-  max-width: 50rem;
+  max-width: 40rem;
   margin: 0rem auto;
   padding: 0 1rem;
-  font-family: serif;
+  font-family: 'Zen Old Mincho', cursive;
 }
 
 a {
@@ -71,11 +71,10 @@ h1 {
   display: inline-block;
 }
 
-.tag_content {
+.tag_content:hover {
   text-decoration: underline;
   text-decoration-thickness: from-font;
 }
-
 
 
 /** 作品一覧ページ **/
@@ -83,41 +82,46 @@ h1 {
 .work_info {
   margin: 0 auto;
   max-width: 35rem;
-  font-size: 0.9rem;
+  font-size: 1.0rem;
 }
 
 .work_info h2 {
-  font-size: 1.4rem;
+  font-size: 1.1rem;
+  text-decoration: underline;
 }
 
 .work_info .date, .work_info .genre, .work_info .tags {
   text-align: right;
   margin: 0 0rem 0 1rem;
+  font-size: 0.9rem
 }
 
 .work_info .caption {
   padding-left: 1rem;
 }
 
+
 /** 本文ページ **/
 
 .text p {
   margin-top: 2rem;
+  font-family: serif;
 }
 
 .work_header_info {
   text-align: right;
 }
 
+.work_header_info .caption {
+  text-align: left;
+}
+
 .work_header_info p {
   margin: 0;
 }
-.work_footer_info {
-  text-align: right;
-}
 
 .toc {
-  text-align: right;
+  text-align: left;
 }
 
 /*** ダークモード対応 ***/

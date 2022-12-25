@@ -5,12 +5,17 @@ import scala.io.Source
 import java.nio.file.Path
 import java.nio.file.Paths
 
+import workbuilder.html
+
+import play.twirl.api.Html
+
 case class NovelInfoJson(
     title: String,
     date: Option[String],
     tag: Option[Seq[String]],
     files: Option[Seq[String]],
-    caption: Option[String]
+    caption: Option[String],
+    draft: Option[Boolean]
 ) {
   def toNovel(path: Path, genre: Genre) =
     Novel(
@@ -20,7 +25,8 @@ case class NovelInfoJson(
       caption,
       tag.fold(Seq.empty[Tag])(_.map(Tag(_))),
       files.getOrElse[Seq[String]](Seq("text.txt")),
-      date.map(Date(_))
+      date.map(Date(_)),
+      draft.isDefined
     )
 }
 
@@ -31,17 +37,24 @@ case class Novel(
     caption: Option[String],
     tag: Seq[Tag],
     files: Seq[String],
-    date: Option[Date]
+    date: Option[Date],
+    draft: Boolean
 ) {
   // TODO: showGenreとshowCaptionを適切にパラメータ化すること
-  def htmlTag(showGenre: Boolean = false, showCaption: Boolean = true) = s"""
+  def htmlTag(showGenre: Boolean = false, showCaption: Boolean = true) =
+    s"""
     |<div class="work_info">
     |  <h2><a href="/${outputPath}">${title}</a></h2>
     |  <div class="info">
-    |    ${date.fold("")(date => s"""<p class="date">投稿日: ${date.year}/${f"${date.month}%02d"}/${f"${date.day}%02d"}</p>""")}
-    |    ${if (showGenre) s"<p class=\"genre\">ジャンル: <a href=\"/${genre.path}\">${genre.name}</a></p>" else ""}
+    |    ${
+        if (showCaption && caption.isDefined)
+          s"<div class=\"caption\"><p>${caption.get.replaceAll("\n", "<br>")}</p></div>"
+        else ""
+      }
+    |    ${date.fold("")(date => s"""<p class="date">${date.year}/${f"${date.month}%02d"}/${f"${date.day}%02d"}</p>""")}
+    |    ${if (showGenre) s"<p class=\"genre\"><a href=\"/${genre.path}\">${genre.name}</a></p>" else ""}
     |    <div class="tags">${tag.map(_.htmlTag()).mkString}</div>
-    |    ${if (showCaption && caption.isDefined) s"<div class=\"caption\"><p>${caption.get.replaceAll("\n", "<br>")}</p></div>" else ""}
+
     |  </div>
     |<hr>
     |</div>""".stripMargin
@@ -72,25 +85,32 @@ object Novel {
           s"\n<p>${l.replaceAll("(.)\n", "$1<br/>\n").replaceAll("｜([^《]*)《([^》]*)》", "<ruby>$1<rt>$2</rt></ruby>")}</p>\n"
         )
         .mkString
+      val date = source.date.fold("")(date =>
+        s"""<p class="date">${date.year}/${f"${date.month}%02d"}/${f"${date.day}%02d"}</p>"""
+      )
+      val caption =
+        source.caption.fold("")(c => s"<div class=\"caption\"><p>${c.replaceAll("\n", "<br>")}</p></div>")
       source.files.zipWithIndex
         .map((f, i) => {
           val text = Source.fromFile(source.path.resolve(f).toString()).mkString
           val path = Paths.get(source.outputPath).resolve(fileName(i))
           val pageTitle = if (length == 1) s"${source.title}" else s"${source.title} (${i + 1})"
-          val html = Template.htmlPage(
-            pageTitle,
-            s"""<h1 class="title">${source.title}</h1>
+          var html2 = html
+            .baseof(pageTitle)(
+              Html(s"""<h1 class="title">${source.title}</h1>
           |<div class="work_header_info">
-          |  ${source.date.fold("")(date => s"""<p class="date">投稿日: ${date.year}/${f"${date.month}%02d"}/${f"${date.day}%02d"}</p>""")}
-          |  <p>ジャンル: <a href="/${source.genre.path}">${source.genre.name}</a></p>
+          |  ${caption}
+          |  ${date}
+          |  <p><a href="/${source.genre.path}">${source.genre.name}</a></p>
           |  <div class="tag">${source.tag.map(_.htmlTag()).mkString}</div>
           |</div>
           |${toc(i)}
           |<div class="text">${toHtmlText(text)}</div>
           |${toc(i)}
-          |""".stripMargin
-          )
-          (path -> html)
+          |""".stripMargin)
+            )
+            .toString()
+          (path -> html2)
         })
         .toMap
     }

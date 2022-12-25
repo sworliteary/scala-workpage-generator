@@ -1,0 +1,8 @@
+@import workbuilder.Tag
+@(tag: Tag, num: Option[Int] = None)
+@defining("tags/" + tag.name.hashCode().toHexString) {path => 
+    @num match {
+        case Some(i) => {<span class="tag"><a href="/@path/">#<span class="tag_content">@tag.name</span> (@i)</a></span>}
+        case None => {<span class="tag"><a href="/@path/">#<span class="tag_content">@tag.name</span></a></span>}
+    }
+}
