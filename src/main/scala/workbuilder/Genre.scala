@@ -3,6 +3,7 @@ package workbuilder
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
+import workbuilder.html
 
 case class GenreJson(
     name: String,
@@ -38,13 +39,15 @@ object Genre {
     def generate(source: Genre, database: Database): Map[Path, String] = {
       def path = Paths.get(source.path).resolve("index.html")
       def works = database.getNovels.filter(_.genre == source).sortBy(_.date).reverse
+      /*
       val html = Template.htmlPage(
         source.name,
         s"""<h1>${source.name}</h1>
       |${works.map(_.htmlTag()).mkString}
       """.stripMargin
       )
-      Map(path -> html)
+       */
+      Map(path -> html.novels(works, source.name, false).toString)
     }
   }
 }

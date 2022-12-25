@@ -5,7 +5,6 @@ import java.nio.file.Paths
 
 import workbuilder.PageGenerator
 import workbuilder.Database
-import workbuilder.Template
 import workbuilder.html
 
 sealed trait AllTagPage

@@ -3,7 +3,6 @@ package workbuilder.pages
 import java.nio.file.Paths
 import workbuilder.PageGenerator
 import workbuilder.Database
-import workbuilder.Template
 import workbuilder.Genre
 import workbuilder.html
 import java.nio.file.Path

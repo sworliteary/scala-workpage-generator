@@ -16,7 +16,7 @@ class Database {
 
   def getGenres = genres.toList
 
-  def getNovels = novels.toList
+  def getNovels = novels.toList.filter(!_.draft)
 
   def getTags = tags.toList
 

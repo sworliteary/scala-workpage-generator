@@ -2,22 +2,10 @@
 @(genres: List[Genre])
 
 @baseof(title = "Sayonara Voyage") {
-<h2>サイト概要</h2>
-<p>藤谷光の作品サイトです。</p>
+<h3>ジャンル</h3>
 <ul>
-    <li><a href="https://sayonara.voyage">Webサイト</a></li>
-    <li><a href="https://twitter.com/sworliteary">Twitter</a></li>
-</ul>
-<h3>オリジナル</h3>
-<ul>
-@for(genre <- genres.filter(!_.is_fan_fiction)) {
-<li><a href="/@genre.path">@genre.name</a></li>
+@for(genre <- genres) {
+    <li><a href="/@genre.path">@genre.name</a></li>
 }
-</ul>
-<h3>二次創作</h3>
 <ul>
-@for(genre <- genres.filter(_.is_fan_fiction)) {
-<li><a href="/@genre.path">@genre.name</a></li>
-}
-</ul>
 }

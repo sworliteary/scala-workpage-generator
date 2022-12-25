@@ -1,0 +1,8 @@
+@import workbuilder.Novel
+@(novels: List[Novel], title: String, showGenre: Boolean)
+@defining(novels.map(_.htmlTag(showGenre).mkString).mkString) {html => 
+    @baseof(title = title) {
+        <h3>@title</h3>
+        @Html(html)
+    }
+}
