@@ -12,7 +12,9 @@ lazy val root = (project in file("."))
       "commons-io" % "commons-io" % "2.8.0",
       "joda-time" % "joda-time" % "2.10.14",
       "com.github.scopt" %% "scopt" % "4.0.1",
-      "com.typesafe.play" % "twirl-api_3" % "1.6.0-M6"
+      "com.typesafe.play" % "twirl-api_3" % "1.6.0-M6",
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
+      "ch.qos.logback" % "logback-classic" % "1.2.3"
     ) ++ Seq(
       "io.circe" %% "circe-core",
       "io.circe" %% "circe-generic",

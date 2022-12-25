@@ -2,10 +2,12 @@
 @(genres: List[Genre])
 
 @baseof(title = "Sayonara Voyage") {
+<h3><a href="/about.html"/>このサイトについて</a></h3>
 <h3>ジャンル</h3>
 <ul>
 @for(genre <- genres) {
-    <li><a href="/@genre.path">@genre.name</a></li>
+    <li><a href="/@genre.path ">@genre.name</a></li>
 }
-<ul>
+</ul>
+<h3><a href="/tags/">タグ一覧</a></h3>
 }

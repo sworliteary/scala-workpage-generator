@@ -18,9 +18,11 @@ import math.Ordered.orderingToOrdered
 import workbuilder.pages.AllTagPageObject
 import workbuilder.pages.RecentlyPageObject
 import workbuilder.pages.IndexPageObject
+import workbuilder.pages.AboutPageO
 import workbuilder.html
+import com.typesafe.scalalogging.LazyLogging
 
-object Main {
+object Main extends LazyLogging {
   def listFilesRecursive(dir: File, fileName: String): Seq[File] = {
     val these = dir.listFiles.filter(_.getPath.endsWith(fileName))
     these ++ dir.listFiles
@@ -28,7 +30,7 @@ object Main {
       .flatMap(d => listFilesRecursive(d, fileName))
   }
 
-  def genPage[T, U >: T](baseDir: Path)(database: Database, source: T*)(implicit generator: PageGenerator[U]) = {
+  def genPage[T, U >: T](baseDir: Path, database: Database)(source: T*)(using generator: PageGenerator[U]) = {
     source.map(s => generator.generate(s, database)).flatten.map((p, s) => writeFile(baseDir)(p, s))
   }
 
@@ -40,11 +42,8 @@ object Main {
     Files.write(p, text.getBytes(StandardCharsets.UTF_8))
   }
 
-  def main(args: Array[String]): Unit = {
-    val novelRepository = new File(args.head)
-    val db = new Database
-
-    val genres = listFilesRecursive(novelRepository, "genre.json")
+  def getGenres(repository: File) =
+    listFilesRecursive(repository, "genre.json")
       .map(f =>
         decode[GenreJson](Source.fromFile(f).mkString) match {
           case Right(some) =>
@@ -56,28 +55,43 @@ object Main {
         }
       )
       .flatten
-    db.addGenre(genres: _*)
-    val works = genres
-      .map(genre =>
-        listFilesRecursive(genre.directory, "work.json")
-          .map(f =>
-            decode[NovelInfoJson](Source.fromFile(f).mkString).toOption
-              .map(_.toNovel(f.getParentFile().toPath(), genre))
-          )
-          .flatten
-          .filter(!_.draft)
+
+  def getNovels(genre: Genre) =
+    listFilesRecursive(genre.directory, "work.json")
+      .map(f =>
+        decode[NovelInfoJson](Source.fromFile(f).mkString).toOption
+          .map(_.toNovel(f.getParentFile().toPath(), genre))
       )
       .flatten
+      .filter(!_.draft)
+
+  def main(args: Array[String]): Unit = {
+    if (args.length == 0) {
+      logger.error("repository path is not defined.")
+      return
+    }
+
+    val novelRepository = new File(args.head)
+    val db = new Database
+
+    val genres = getGenres(novelRepository)
+    db.addGenre(genres: _*)
+    logger.info(s"added genres (${genres.length})")
+
+    val works = genres
+      .map(getNovels)
+      .flatten
     db.addNovel(works: _*)
+    logger.info(s"added novels (${works.length})")
 
     val outDir = Paths.get("public")
     FileUtils.copyDirectory(File("static"), outDir.toFile(), true)
-    // println(html.index(genres.toList))
-    genPage(outDir)(db, works: _*)
-    genPage(outDir)(db, genres: _*)
-    genPage(outDir)(db, db.getTags: _*)
-    genPage(outDir)(db, AllTagPageObject)
-    genPage(outDir)(db, RecentlyPageObject)
-    genPage(outDir)(db, IndexPageObject)
+    genPage(outDir, db)(genres: _*)
+    genPage(outDir, db)(works: _*)
+    genPage(outDir, db)(db.getTags: _*)
+    genPage(outDir, db)(AllTagPageObject)
+    genPage(outDir, db)(RecentlyPageObject)
+    genPage(outDir, db)(IndexPageObject)
+    genPage(outDir, db)(AboutPageO)
   }
 }
