@@ -16,7 +16,7 @@ object IndexPageObject extends IndexPage
 object IndexPage {
   implicit object IndexPageGenerator extends PageGenerator[IndexPage] {
     def generate(_s: IndexPage, database: Database): Map[Path, String] = {
-      val genres = database.getGenres
+      val genres = database.getGenres.filter(v => database.getNovels.filter(_.genre == v).length > 0)
       Map(_s.path -> html.index(genres).toString)
     }
   }

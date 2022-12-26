@@ -23,10 +23,10 @@ case class NovelInfoJson(
       genre,
       title,
       caption,
-      tag.fold(Seq.empty[Tag])(_.map(Tag(_))),
+      tag.fold(Seq.empty[Tag])(_.sorted.map(Tag(_))),
       files.getOrElse[Seq[String]](Seq("text.txt")),
       date.map(Date(_)),
-      draft.isDefined
+      draft.exists(z => z)
     )
 }
 
@@ -44,7 +44,7 @@ case class Novel(
   def htmlTag(showGenre: Boolean = false, showCaption: Boolean = true) =
     s"""
     |<div class="work_info">
-    |  <h2><a href="/${outputPath}">${title}</a></h2>
+    |  <h2 class="title"><a href="/${outputPath}">${title}</a></h2>
     |  <div class="info">
     |    ${
         if (showCaption && caption.isDefined)
@@ -52,7 +52,7 @@ case class Novel(
         else ""
       }
     |    ${date.fold("")(date => s"""<p class="date">${date.year}/${f"${date.month}%02d"}/${f"${date.day}%02d"}</p>""")}
-    |    ${if (showGenre) s"<p class=\"genre\"><a href=\"/${genre.path}\">${genre.name}</a></p>" else ""}
+    |    ${if (showGenre) s"<p class=\"genre\"><a href=\"/${genre.path}\">${Genre.HEADER}${genre.name}</a></p>" else ""}
     |    <div class="tags">${tag.map(_.htmlTag()).mkString}</div>
 
     |  </div>
@@ -101,7 +101,7 @@ object Novel {
           |<div class="work_header_info">
           |  ${caption}
           |  ${date}
-          |  <p><a href="/${source.genre.path}">${source.genre.name}</a></p>
+          |  <p><a href="/${source.genre.path}">${Genre.HEADER}${source.genre.name}</a></p>
           |  <div class="tag">${source.tag.map(_.htmlTag()).mkString}</div>
           |</div>
           |${toc(i)}
