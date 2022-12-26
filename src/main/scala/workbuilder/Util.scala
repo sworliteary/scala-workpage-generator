@@ -6,7 +6,7 @@ object Util {
       .map((v, i) =>
         if (v == '-') "_"
         else if (!v.isUpper) v.toString()
-        else if (i == 0 || name(i - 1) == '_') v.toLower.toString()
+        else if (i == 0 || name(i - 1) == '_' || name(i - 1) == '/') v.toLower.toString()
         else "_" + v.toLower.toString()
       )
       .mkString

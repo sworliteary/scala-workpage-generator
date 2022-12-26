@@ -1,8 +1,5 @@
 package workbuilder
 
-import io.circe.generic.auto.*
-import io.circe.parser.decode
-import io.circe.syntax.*
 import org.apache.commons.io.FileUtils
 
 import java.io.File
@@ -44,24 +41,12 @@ object Main extends LazyLogging {
 
   def getGenres(repository: File) =
     listFilesRecursive(repository, "genre.json")
-      .map(f =>
-        decode[GenreJson](Source.fromFile(f).mkString) match {
-          case Right(some) =>
-            if (some.is_fan_fiction)
-              Some(Fanfiction(some.name, f.getParentFile().getName(), f.getParentFile()))
-            else
-              Some(Original(f.getParentFile()))
-          case Left(_) => None
-        }
-      )
+      .map(Genre.fromFile)
       .flatten
 
   def getNovels(genre: Genre) =
     listFilesRecursive(genre.directory, "work.json")
-      .map(f =>
-        decode[NovelInfoJson](Source.fromFile(f).mkString).toOption
-          .map(_.toNovel(f.getParentFile().toPath(), genre))
-      )
+      .map(f => Novel.fromFile(genre, f))
       .flatten
       .filter(!_.draft)
 

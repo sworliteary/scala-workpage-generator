@@ -1,13 +1,16 @@
 package workbuilder
 
-import scala.math.Ordering
-import scala.io.Source
-import java.nio.file.Path
-import java.nio.file.Paths
-
+import io.circe.generic.auto.*
+import io.circe.parser.decode
+import io.circe.syntax.*
+import play.twirl.api.Html
 import workbuilder.html
 
-import play.twirl.api.Html
+import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
+import scala.io.Source
+import scala.math.Ordering
 
 case class NovelInfoJson(
     title: String,
@@ -59,12 +62,18 @@ case class Novel(
     |<hr>
     |</div>""".stripMargin
 
-  def outputPath: String = genre.path + "/" + Util.camelCaseToSnakeCase(path.getFileName().toString())
+  def outputPath: String =
+    genre.path + "/" + Util.camelCaseToSnakeCase(
+      path.toString().replaceAllLiterally(genre.directory.toString() + "/", "")
+    )
 
   def hasTag(t: Tag) = tag.contains(t)
 }
 
 object Novel {
+  def fromFile(genre: Genre, f: File) = decode[NovelInfoJson](Source.fromFile(f).mkString).toOption
+    .map(_.toNovel(f.getParentFile().toPath(), genre))
+
   implicit object NovelPageGenerator extends workbuilder.PageGenerator[Novel] {
     def generate(source: Novel, database: Database): Map[Path, String] = {
       val length = source.files.length

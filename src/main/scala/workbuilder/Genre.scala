@@ -1,9 +1,14 @@
 package workbuilder
 
+import io.circe.generic.auto.*
+import io.circe.parser.decode
+import io.circe.syntax.*
+import workbuilder.html
+
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
-import workbuilder.html
+import scala.io.Source
 
 case class GenreJson(
     name: String,
@@ -45,4 +50,13 @@ object Genre {
     }
   }
   val HEADER = "◇ "
+
+  def fromFile(f: File): Option[Genre] = decode[GenreJson](Source.fromFile(f).mkString) match {
+    case Right(some) =>
+      if (some.is_fan_fiction)
+        Some(Fanfiction(some.name, f.getParentFile().getName(), f.getParentFile()))
+      else
+        Some(Original(f.getParentFile()))
+    case Left(_) => None
+  }
 }
