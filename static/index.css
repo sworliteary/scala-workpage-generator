@@ -7,10 +7,11 @@ body {
   margin: 0rem auto;
   padding: 0 1rem;
   font-family: 'Zen Old Mincho', cursive;
+  color: #393c41;
 }
 
 a {
-  color: #202124;
+  color: #393c41;
   text-decoration: none;
 }
 
@@ -36,11 +37,19 @@ h1 {
   margin-bottom: 2rem;
 }
 
+.title, .title a {
+  color: #111113;
+}
 .text {
   max-width: 45rem;
   margin: 3rem auto;
 }
 
+
+.content {
+  max-width: 35rem;
+  margin: 1rem auto;
+}
 /*** 各コンポーネント ***/
 
 .header {
@@ -48,9 +57,14 @@ h1 {
 }
 
 .header h1 {
-  font-size: 2rem;
+  font-size: 2.3rem;
   text-align: center;
   font-family: "Dancing Script", cursive;
+  margin-bottom: 0.5rem;
+}
+.header p {
+  text-align: center;
+  font-family: cursive;
 }
 
 .header .menu {
@@ -67,7 +81,6 @@ h1 {
 .tag {
   font-size: 0.9rem;
   margin-left: 0.2rem;
-  color: #43454a;
   display: inline-block;
 }
 
@@ -87,7 +100,6 @@ h1 {
 
 .work_info h2 {
   font-size: 1.1rem;
-  text-decoration: underline;
 }
 
 .work_info .date, .work_info .genre, .work_info .tags {
@@ -133,6 +145,9 @@ h1 {
   }
   a {
     color: #bdc1c6;
+  }
+  .title, .title a {
+    color: #ffffff;
   }
   hr {
     margin: 1rem 0.5rem 1rem 0.5rem;
