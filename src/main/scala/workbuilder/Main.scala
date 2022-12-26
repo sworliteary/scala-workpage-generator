@@ -77,7 +77,7 @@ object Main extends LazyLogging {
 
     val series = genres.map(getSeries).flatten
     db.addSeries(series: _*)
-    logger.info(s"added series (${series.length}) (${series(0)}")
+    logger.info(s"added series (${series.length})")
 
     val works = genres
       .map(g => getNovels(g, db.getSeries.filter(_.genre == g)))
