@@ -58,7 +58,11 @@ object Main extends LazyLogging {
       .filter(!_.draft)
       .concat(
         series
-          .map(s => listFilesRecursive(s.directory, "work.json").map(f => Novel.fromFile(s.genre, f, Some(s))).flatten)
+          .map(s =>
+            listFilesRecursive(s.directory, "work.json").sorted
+              .map(f => Novel.fromFile(s.genre, f, Some(s)))
+              .flatten
+          )
           .flatten
       )
 
