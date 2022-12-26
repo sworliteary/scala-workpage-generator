@@ -17,7 +17,7 @@ object RecentlyPage {
   implicit object RecentlyPageGenerator extends PageGenerator[RecentlyPage] {
     def generate(source: RecentlyPage, database: Database): Map[Path, String] = {
       val novels = database.getNovels.sortBy(_.date).reverse.slice(0, 10)
-      var r = html.novels(novels, "最近の投稿", true).toString
+      var r = html.novels(novels, "最近の投稿", workbuilder.ShowNovelInfoOption(showGenre = true), None).toString
       Map(source.path -> r)
     }
   }

@@ -1,0 +1,6 @@
+@import workbuilder.Novel
+@import workbuilder.ShowNovelInfoOption
+@(novels: List[Novel], option: ShowNovelInfoOption)
+@defining(novels.sortBy(_.date).reverse.map(_.htmlTag(option).mkString).mkString) {html => 
+    @Html(html)
+}

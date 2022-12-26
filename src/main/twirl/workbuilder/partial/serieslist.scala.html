@@ -1,0 +1,8 @@
+@import workbuilder.Series
+@(series: Seq[Series])
+@for(s <- series) {
+   <div class="series">
+    <h3 class="title"><a href="/@s.path">@s.name</a></h3>
+    <p>@s.description</p>
+   </div>
+}

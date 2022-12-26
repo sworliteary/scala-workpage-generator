@@ -43,13 +43,14 @@ object Genre {
   implicit object GenrePageGenerator extends PageGenerator[Genre] {
     def generate(source: Genre, database: Database): Map[Path, String] = {
       def path = Paths.get(source.path).resolve("index.html")
+      val series = database.getSeries.filter(_.genre == source)
       database.getNovels.filter(_.genre == source).sortBy(_.date).reverse match {
         case Nil      => Map()
-        case _ @works => Map(path -> html.novels(works, HEADER + source.name, false).toString)
+        case _ @works => Map(path -> html.genre(source, works, series).toString)
       }
     }
   }
-  val HEADER = "◇ "
+  val HEADER = "❏ "
 
   def fromFile(f: File): Option[Genre] = decode[GenreJson](Source.fromFile(f).mkString) match {
     case Right(some) =>
