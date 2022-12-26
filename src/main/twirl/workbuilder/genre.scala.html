@@ -1,0 +1,15 @@
+@import workbuilder.Novel
+@import workbuilder.ShowNovelInfoOption
+@import workbuilder.Series
+@import workbuilder.Genre
+@import workbuilder.partial
+@(genre: Genre, novels: List[Novel], series: List[Series])
+@baseof(title = genre.name) {
+    <h3 class="title center">@Genre.HEADER @genre.name</h3>
+    @if(series.length > 0) {
+        <h3>シリーズ</h3>
+        @partial.html.serieslist(series)
+    }
+    <h3>作品</h3>
+    @partial.html.novellist(novels, ShowNovelInfoOption(showGenre = false))
+}

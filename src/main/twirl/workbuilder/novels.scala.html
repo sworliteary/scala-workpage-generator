@@ -1,8 +1,9 @@
 @import workbuilder.Novel
-@(novels: List[Novel], title: String, showGenre: Boolean)
-@defining(novels.map(_.htmlTag(showGenre).mkString).mkString) {html => 
-    @baseof(title = title) {
-        <h3>@title</h3>
-        @Html(html)
-    }
+@import workbuilder.ShowNovelInfoOption
+@import workbuilder.partial
+@(novels: List[Novel], title: String, option: ShowNovelInfoOption, caption: Option[String])
+@baseof(title = title) {
+    <h3>@title</h3>
+    <p class="page_caption">@caption.getOrElse("")</p>
+    @partial.html.novellist(novels, option)
 }
