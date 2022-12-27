@@ -108,7 +108,7 @@ h1 {
 /** 作品一覧ページ **/
 
 .page_caption {
-  text-align: right;
+  margin-left: 1rem;
 }
 
 .work_info {

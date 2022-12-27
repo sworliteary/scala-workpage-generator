@@ -37,7 +37,6 @@ object Series {
   implicit object SeriesGenerator extends PageGenerator[Series] {
     def generate(source: Series, database: Database): Map[Path, String] = {
       val novels = database.getNovels.filter(_.series.exists(_ == source)).sortBy(_.genre.directory.getName())
-      println(novels)
       Map(
         Paths.get(source.path).resolve("index.html") -> html
           .novels(
