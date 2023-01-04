@@ -4,7 +4,7 @@
 @import workbuilder.Genre
 @import workbuilder.partial
 @(genre: Genre, novels: List[Novel], series: List[Series])
-@baseof(title = genre.name) {
+@baseof(title = Genre.HEADER + genre.name) {
     <h3 class="title center">@Genre.HEADER @genre.name</h3>
     @if(series.length > 0) {
         <h3>シリーズ</h3>
