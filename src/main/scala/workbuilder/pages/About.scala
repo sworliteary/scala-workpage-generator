@@ -15,5 +15,4 @@ object AboutPageT {
       Map(Paths.get("about.html") -> workbuilder.html.about().toString)
     }
   }
-
 }

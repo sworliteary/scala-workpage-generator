@@ -1,4 +1,5 @@
 @(title: String)(content: Html)
+@defining(if(title == "Sayonara Voyage")  title else title + " | Sayonara Voyage" ) {title => 
 <!DOCTYPE html>        
 <html lang="ja">
 <head>
@@ -26,3 +27,4 @@
 </div>
 </body>
 </html>
+}
