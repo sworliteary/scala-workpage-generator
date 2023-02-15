@@ -8,6 +8,11 @@ val circeVersion = "0.14.2"
 lazy val root = (project in file("."))
   .settings(
     name := "work-sayonara-voyage",
+    nativeImageOptions ++= List(
+      "--initialize-at-build-time",
+      "--no-fallback",
+      "--no-server"
+    ),
     libraryDependencies := Seq(
       "commons-io" % "commons-io" % "2.8.0",
       "joda-time" % "joda-time" % "2.10.14",
@@ -22,3 +27,4 @@ lazy val root = (project in file("."))
     ).map(_ % circeVersion)
   )
   .enablePlugins(SbtTwirl)
+  .enablePlugins(NativeImagePlugin)
