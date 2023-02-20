@@ -9,9 +9,6 @@ lazy val root = (project in file("."))
   .settings(
     name := "work-sayonara-voyage",
     nativeImageOptions ++= List(
-      "--initialize-at-build-time",
-      "--no-fallback",
-      "--no-server"
     ),
     libraryDependencies := Seq(
       "commons-io" % "commons-io" % "2.8.0",
