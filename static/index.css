@@ -140,6 +140,10 @@ h1 {
   font-size: 0.9rem;
 }
 
+.work_info:last-child > hr {
+  border: none;
+}
+
 .series {
   max-width: 35rem;
   margin: 0 auto;

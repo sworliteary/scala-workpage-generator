@@ -2,5 +2,7 @@
 @import workbuilder.ShowNovelInfoOption
 @(novels: List[Novel], option: ShowNovelInfoOption)
 @defining(novels.map(_.htmlTag(option).mkString).mkString) {html => 
+    <div class="novel-list">
     @Html(html)
+    </div>
 }
